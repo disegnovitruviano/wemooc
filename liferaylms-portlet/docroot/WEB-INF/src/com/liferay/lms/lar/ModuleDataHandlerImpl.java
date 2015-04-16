@@ -534,34 +534,56 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 	for (Element actElement : entryElement.elements("descriptionfile")) {
 		
 		FileEntry oldFile = (FileEntry)context.getZipEntryAsObject(actElement.attributeValue("path"));
+		
+		
 								
 		FileEntry newFile;
 		long folderId=0;
 		String description = "";
 		
 		try {
+			String titleFile=oldFile.getTitle();
+			//si el archivo le han cambiado el titulo y no tiene extension
+			if(!oldFile.getTitle().endsWith(oldFile.getExtension())){
+				titleFile=oldFile.getTitle()+"."+oldFile.getExtension();
+			}
+		
 			
 			InputStream input = context.getZipEntryAsInputStream(actElement.attributeValue("file"));
 			
 			long repositoryId = DLFolderConstants.getDataRepositoryId(context.getScopeGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 			folderId=createDLFolders(userId,repositoryId,serviceContext);
-			
 			String ficheroStr = actElement.attributeValue("file");	
 			String ficheroExtStr = "";
 			String extension[] = ficheroStr.split("\\.");
+			
 			if(extension.length > 0){
 				ficheroExtStr = "."+extension[extension.length-1];
 			}
 			
-			newFile = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , oldFile.getTitle()+ficheroExtStr, "contentType", oldFile.getTitle(), StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext );
-			
+			if(!ficheroExtStr.endsWith(oldFile.getExtension())){
+				ficheroExtStr="."+oldFile.getExtension();
+				ficheroStr=ficheroStr+"."+oldFile.getExtension();
+				}
+						
+			newFile = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , ficheroExtStr, "contentType", titleFile, StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext );
+				
 			description = descriptionFileParserLarToDescription(theModule.getDescription(), oldFile, newFile);
 			
 		} catch(DuplicateFileException dfl){
-			
 			try{
-				FileEntry existingFile = DLAppLocalServiceUtil.getFileEntry(context.getScopeGroupId(), folderId, oldFile.getTitle());
+				String titleFile=oldFile.getTitle();
+				
+				//si el archivo le han cambiado el titulo y no tiene extension
+				if(!oldFile.getTitle().endsWith(oldFile.getExtension())){
+					titleFile=oldFile.getTitle();
+							
+				}
+				
+				FileEntry existingFile = DLAppLocalServiceUtil.getFileEntry(context.getScopeGroupId(), folderId, titleFile);
 				description = descriptionFileParserLarToDescription(theModule.getDescription(), oldFile, existingFile);
+				
+				
 			} catch (Exception e) {
 				description = theModule.getDescription();
 			}
@@ -569,8 +591,8 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			System.out.println("* ERROR! descriptionfile: " + e.getMessage());
+		//	e.printStackTrace();
+			System.out.println("*2 ERROR! descriptionfile: " + e.getMessage());
 		}
 
 		theModule.setDescription(description);
@@ -719,6 +741,7 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 			} catch(DuplicateFileException dfl){
 				
 				try{
+								
 					FileEntry existingFile = DLAppLocalServiceUtil.getFileEntry(context.getScopeGroupId(), folderId, oldFile.getTitle());
 					description = descriptionFileParserLarToDescription(nuevaLarn.getDescription(), oldFile, existingFile);
 				}catch(Exception e){
