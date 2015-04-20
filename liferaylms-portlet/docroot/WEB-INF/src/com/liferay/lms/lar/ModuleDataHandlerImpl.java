@@ -198,8 +198,7 @@ private void exportEntry(PortletDataContext context, Element root, Module entry)
 	descriptionFileParserDescriptionToLar(entry.getDescription(), entry.getGroupId(), entry.getModuleId(), context, entryElement);		
 	
 	LearningActivityTypeRegistry learningActivityTypeRegistry = new LearningActivityTypeRegistry();
-	
-	List<LearningActivity> actividades=LearningActivityLocalServiceUtil.getLearningActivitiesOfModule(entry.getModuleId());
+		List<LearningActivity> actividades=LearningActivityLocalServiceUtil.getLearningActivitiesOfModule(entry.getModuleId());
 	for(LearningActivity actividad:actividades)
 	{
 		
@@ -244,11 +243,13 @@ private void exportEntry(PortletDataContext context, Element root, Module entry)
 			}
 			
 				try {
-					
+					System.out.println("actividad.getTypeId() "+actividad.getTypeId());
+
 					for(int i=0;i<img.size();i++){
 						AssetEntry docAsset= AssetEntryLocalServiceUtil.getAssetEntry(Long.valueOf(img.get(i)));
 						DLFileEntry docfile=DLFileEntryLocalServiceUtil.getDLFileEntry(docAsset.getClassPK());
 						
+							
 						String extension = "";
 						if(!docfile.getTitle().contains(".") && docfile.getExtension().equals("")){
 							if(docfile.getMimeType().equals("image/jpeg")){
@@ -509,7 +510,7 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 				long repositoryId = DLFolderConstants.getDataRepositoryId(context.getScopeGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 				folderId=createDLFolders(userId,repositoryId, serviceContext);
 											
-				FileEntry image = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , imageName, "contentType", imageName, StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext ) ;
+				FileEntry image = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , imageName, "image/jpeg", imageName, StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext ) ;
 		
 				theModule.setIcon(image.getFileEntryId());	
 				
@@ -566,7 +567,7 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 				ficheroStr=ficheroStr+"."+oldFile.getExtension();
 				}
 						
-			newFile = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , ficheroExtStr, "contentType", titleFile, StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext );
+			newFile = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , ficheroExtStr, oldFile.getMimeType(), titleFile, StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext );
 				
 			description = descriptionFileParserLarToDescription(theModule.getDescription(), oldFile, newFile);
 			
@@ -714,7 +715,7 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 			
 			FileEntry oldFile = (FileEntry)context.getZipEntryAsObject(actElementFile.attributeValue("path"));
 			
-			//System.out.println("      Description File: " + oldFile.getTitle()); 
+			System.out.println("*  Description File: " + oldFile.getTitle()); 
 									
 			FileEntry newFile;
 			long folderId=0;
@@ -734,7 +735,18 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 					ficheroExtStr = "."+extension[extension.length-1];
 				}
 				
-				newFile = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , oldFile.getTitle()+ficheroExtStr, "contentType", oldFile.getTitle(), StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext );
+				System.out.println("*   getMimeType getMimeType: " + oldFile.getMimeType()); 
+				System.out.println("*   getExtension getExtension: " + oldFile.getExtension()); 
+				
+			
+				
+				String titleFile=oldFile.getTitle();
+				if(!oldFile.getTitle().endsWith(oldFile.getExtension())){
+					titleFile=oldFile.getTitle()+"."+oldFile.getExtension();
+				} 
+				
+				System.out.println("*   titleFile titleFile: " + titleFile); 
+				newFile = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , titleFile, oldFile.getMimeType(), oldFile.getTitle(), StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext );
 									
 				description = descriptionFileParserLarToDescription(nuevaLarn.getDescription(), oldFile, newFile);
 				
@@ -742,6 +754,7 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 				
 				try{
 								
+					
 					FileEntry existingFile = DLAppLocalServiceUtil.getFileEntry(context.getScopeGroupId(), folderId, oldFile.getTitle());
 					description = descriptionFileParserLarToDescription(nuevaLarn.getDescription(), oldFile, existingFile);
 				}catch(Exception e){
@@ -796,7 +809,7 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 						ficheroExtStr = "."+extension[extension.length-1];
 					}
 					
-					newFile = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , oldFile.getTitle()+ficheroExtStr, "contentType", oldFile.getTitle(), StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext );
+					newFile = DLAppLocalServiceUtil.addFileEntry(userId, repositoryId , folderId , oldFile.getTitle()+ficheroExtStr, oldFile.getMimeType(), oldFile.getTitle(), StringPool.BLANK, StringPool.BLANK, IOUtils.toByteArray(input), serviceContext );
 					
 					description = descriptionFileParserLarToDescription(nuevaQuestion.getText(), oldFile, newFile);
 					
@@ -979,12 +992,23 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 								context.addZipEntry(pathqu, file);
 								context.addZipEntry(pathFile + file.getTitle(), file.getContentStream());
 
+								String titleFile=file.getTitle();
+								if(!file.getTitle().endsWith(file.getExtension())){
+									titleFile=file.getTitle()+"."+file.getExtension();
+								} 
+								
+								
+								
 								Element entryElementLoc= element.addElement("descriptionfile");
 								entryElementLoc.addAttribute("path", pathqu);
 								entryElementLoc.addAttribute("file", pathFile + file.getTitle());
 								
-								System.out.println("   + Description file pdf : " + file.getTitle() +" "+file.getFileEntryId() );
+								//System.out.println("titleFile =============="+titleFile);
+								//System.out.println("getMimeType =============="+file.getMimeType());
+								//System.out.println("file.getExtension =============="+file.getExtension());
+							
 								
+									
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								//e.printStackTrace();
