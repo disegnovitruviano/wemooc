@@ -71,7 +71,7 @@
 					<liferay-ui:icon image="close" message="not-passed"></liferay-ui:icon>
 				<%}
 				if(status.equals("started")){%>
-					<liferay-ui:icon image="unchecked" message="started"></liferay-ui:icon>
+					<liferay-ui:icon image="unchecked" message="unchecked"></liferay-ui:icon>
 				<%}%>
 			</liferay-ui:search-container-column-text>
 			<liferay-ui:search-container-column-text cssClass="number-column" name = "comments">

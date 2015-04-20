@@ -302,7 +302,7 @@ if(theTeam!=null)
 							<%} else if(status.equals("not-passed")){%>
 							 	<liferay-ui:icon image="close" message="not-passed"></liferay-ui:icon>
 							<%} else if(status.equals("started")){%>
-						 		<liferay-ui:icon image="unchecked" message="started"></liferay-ui:icon>
+						 		<liferay-ui:icon image="unchecked" message="unchecked"></liferay-ui:icon>
 						 	<%}
 							
 				 			if(status.equals("passed") || status.equals("not-passed")){
