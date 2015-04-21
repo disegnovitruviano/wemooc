@@ -16,6 +16,7 @@
 	PortletURL portletURL = renderResponse.createRenderURL();
 	portletURL.setParameter("jspPage","/html/groupmailing/newMail.jsp");
 	portletURL.setParameter("criteria", criteria); 
+	String name = ParamUtil.getString(request, "name",null);
 %>
 
 <script type="text/javascript">
@@ -46,12 +47,19 @@
 				window.<portlet:namespace />selectedUsers.remove(existingUser);
 			}	
 			window.<portlet:namespace />selectedUsers.add(
-					new A.<portlet:namespace />UserModel({id:userId,name:userName}));
+					new A.<portlet:namespace />UserModel({id:userId,name:'<li class="yui3-widget aui-component aui-textboxlistentry aui-textboxlistentry-focused" tabindex="0"><span class="aui-textboxlistentry-content"><span class="aui-textboxlistentry-text">'+userName+'<span class="aui-icon aui-icon-close aui-textboxlistentry-close" onClick="<portlet:namespace />deleteUser('+userId+')" /></span></span></li>'}));
 			
-			A.one('#<portlet:namespace />selected_users').setContent(window.<portlet:namespace />selectedUsers.get('name').toString());	
+			var selectedUsers = '';
+			window.<portlet:namespace />selectedUsers.each(function(value){selectedUsers+=value.get('name');});
+			A.one('#<portlet:namespace />selected_users').setContent(selectedUsers);	
 			A.one('#<portlet:namespace />to').val(window.<portlet:namespace />selectedUsers.get('id').toString());
-			A.one('#<portlet:namespace />addUser_'+userId).hide();
-			A.one('#<portlet:namespace />deleteUser_'+userId).show();
+			A.all('#<portlet:namespace />addUser_'+userId).each(function(addUserDiv){ addUserDiv.hide(); });  
+			A.all('#<portlet:namespace />deleteUser_'+userId).each(function(deleteUserDiv){ deleteUserDiv.show(); });  
+			
+			var addUserElement = A.one('#_groupmailing_WAR_lmsmailingportlet_addUser_'+userId);
+			if (addUserElement != null) {
+				addUserElement.ancestor('tr').addClass('taglib-search-iterator-highlighted');
+			}
 		});			
 	}
 	
@@ -61,10 +69,18 @@
 			if(existingUser!=null){
 				window.<portlet:namespace />selectedUsers.remove(existingUser);
 			}	
-			A.one('#<portlet:namespace />selected_users').setContent(window.<portlet:namespace />selectedUsers.get('name').toString());	
+			
+			var selectedUsers = '';
+			window.<portlet:namespace />selectedUsers.each(function(value){selectedUsers+=value.get('name');});
+			A.one('#<portlet:namespace />selected_users').setContent(selectedUsers);	
 			A.one('#<portlet:namespace />to').val(window.<portlet:namespace />selectedUsers.get('id').toString());
-			A.one('#<portlet:namespace />addUser_'+userId).show();
-			A.one('#<portlet:namespace />deleteUser_'+userId).hide();	
+			A.all('#<portlet:namespace />addUser_'+userId).each(function(addUserDiv){ addUserDiv.show(); });  
+			A.all('#<portlet:namespace />deleteUser_'+userId).each(function(deleteUserDiv){ deleteUserDiv.hide(); });
+			
+			var addUserElement = A.one('#_groupmailing_WAR_lmsmailingportlet_addUser_'+userId);
+			if (addUserElement != null) {
+				addUserElement.ancestor('tr').removeClass('taglib-search-iterator-highlighted');
+			}
 		});		
 	}
 	
@@ -81,10 +97,12 @@
 				A.one('#<portlet:namespace />to').val ('');
 				A.one('#<portlet:namespace />selected_users').setContent('<liferay-ui:message key="all"/>');
 				A.one('#<portlet:namespace />student_search').hide();
+				A.one('#<portlet:namespace />search_box').hide();
 			}
 			else if (A.one('input:radio[name=<portlet:namespace />radio_to]:checked').get('value')=='student') {
 				A.one('#<portlet:namespace />selected_users').setContent('');
 				A.one('#<portlet:namespace />student_search').show();
+				A.one('#<portlet:namespace />search_box').show();
 			}
 			
 		});
@@ -119,14 +137,32 @@
 <aui:form name="form_to" >
 	<aui:field-wrapper name="mailto">
 		<aui:input checked="<%= true %>" inlineLabel="all" name="radio_to" type="radio" value="all" label="all"  onClick="<%=renderResponse.getNamespace()+\"changeSelection()\" %>" />
-		<aui:input  inlineLabel="student" name="radio_to" type="radio" value="student" label="student" onClick="<%=renderResponse.getNamespace()+\"changeSelection()\" %>"  />
+		<aui:input inlineLabel="student" name="radio_to" type="radio" value="student" label="student" onClick="<%=renderResponse.getNamespace()+\"changeSelection()\" %>"  />
 	</aui:field-wrapper>
 </aui:form>
+
+<!-- Buscador a medias. Por eso está comentado. -->
+<%-- <div id="<portlet:namespace />search_box" class="aui-helper-hidden" >
+	<portlet:renderURL var="searchUserURL">
+	    <portlet:param name="jspPage" value="/html/groupmailing/newMail.jsp" />
+	</portlet:renderURL>
 	
-	
+	<aui:form action="<%=searchUserURL%>">
+		<aui:fieldset>
+			<aui:column>
+				<aui:input inlineField="true" name="name" label="" value="<%=name %>"></aui:input>
+			</aui:column>
+			<aui:column>
+				<aui:button name="searchUsers" value="search" type="submit"></aui:button>
+			</aui:column>
+		</aui:fieldset>
+	</aui:form>
+</div> --%>
+<!-- Fin de comentario de buscador a medias -->	
+
 <div id="<portlet:namespace />student_search" class="aui-helper-hidden" > 
 	
-	<liferay-ui:search-container iteratorURL="<%=portletURL%>" emptyResultsMessage="there-are-no-results" delta="5" deltaConfigurable="true" >
+	<liferay-ui:search-container iteratorURL="<%=portletURL%>" emptyResultsMessage="there-are-no-results" delta="15" deltaConfigurable="true" >
 
 	   	<liferay-ui:search-container-results>
 			<%
@@ -238,7 +274,8 @@
 	
 	<div class="to">
 		<liferay-ui:message key="groupmailing.messages.to" />
-		<div id="<portlet:namespace />selected_users" ><liferay-ui:message key="all"/></div>
+		<div class="aui-helper-clearfix aui-textboxlistentry-holder" id="<portlet:namespace />selected_users" ><liferay-ui:message key="all"/></div>
+		<%-- <ul class="aui-helper-clearfix aui-textboxlistentry-holder" id="<portlet:namespace />selected_users"> --%>
 	</div>
 	
 </div>
@@ -257,7 +294,7 @@
 	<aui:form action="<%=sendNewMailURL %>" method="POST" name="form_mail">
 	
 		<aui:input type="hidden" name="to" id="to" value="" />
-	
+			
 		<div class="mail_subject" >
 			<aui:input name="subject" title="groupmailing.messages.subject" size="120">
 				<aui:validator name="maxLength">120</aui:validator>
