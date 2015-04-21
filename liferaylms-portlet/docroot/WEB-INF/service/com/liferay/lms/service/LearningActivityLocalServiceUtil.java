@@ -461,6 +461,12 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getExtraContentValue(actId, key);
 	}
 
+	public static java.util.List<java.lang.String> getExtraContentValues(
+		long actId, java.lang.String key)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getExtraContentValues(actId, key);
+	}
+
 	public static void setExtraContentValue(long actId, java.lang.String name,
 		java.lang.String val)
 		throws com.liferay.portal.kernel.exception.SystemException {
