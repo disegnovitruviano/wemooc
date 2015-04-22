@@ -1206,6 +1206,9 @@ public class CourseAdmin extends MVCPortlet {
 			CSVWriter writer = new CSVWriter(new OutputStreamWriter(
 					response.getPortletOutputStream(), StringPool.UTF8),CharPool.SEMICOLON);
 			
+			String[] cabecera = {"Id.Usuario","Nombre de usuario","Fecha Inicio" ,"Fecha Fin"};
+			writer.writeNext(cabecera);
+			
 		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		   
 		    Long courseId = ParamUtil.getLong(request, "courseId");
