@@ -116,7 +116,7 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 			Course course = com.liferay.lms.service.CourseLocalServiceUtil.addCourse(
 					title, description, summary, StringPool.BLANK,
 					user.getLocale(), ahora, startregistrationdate, endregistrationdate,template,registermethod,evaluationmethod,
-					calificationType,maxusers,serviceContext);
+					calificationType,maxusers,serviceContext,false);
 			com.liferay.lms.service.CourseLocalServiceUtil.setVisible(course.getCourseId(), published);
 			return course;
 		}

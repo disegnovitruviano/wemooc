@@ -195,7 +195,7 @@ public class CloneCourse implements MessageListener {
 		
 		//when lmsprefs has more than one lmstemplate selected the addcourse above throws an error.
 		int typeSite = GroupLocalServiceUtil.getGroup(course.getGroupCreatedId()).getType();
-		Course newCourse = CourseLocalServiceUtil.addCourse(newCourseName, course.getDescription(), "", "", themeDisplay.getLocale(), today, startDate, endDate, layoutSetPrototypeId, typeSite, serviceContext, course.getCalificationType(), 0);
+		Course newCourse = CourseLocalServiceUtil.addCourse(newCourseName, course.getDescription(), "", "", themeDisplay.getLocale(), today, startDate, endDate, layoutSetPrototypeId, typeSite, serviceContext, course.getCalificationType(), 0,true);
 
 		//Course newCourse = CourseLocalServiceUtil.addCourse(newCourseName, course.getDescription(), "", "", themeDisplay.getLocale(), today, today, today, layoutSetPrototypeId, serviceContext);
 		

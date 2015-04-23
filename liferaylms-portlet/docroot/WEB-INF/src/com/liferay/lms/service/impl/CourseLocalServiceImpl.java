@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.lms.auditing.AuditConstants;
 import com.liferay.lms.auditing.AuditingLogFactory;
 import com.liferay.lms.learningactivity.courseeval.CourseEval;
@@ -29,8 +30,10 @@ import com.liferay.lms.learningactivity.courseeval.CourseEvalRegistry;
 import com.liferay.lms.model.Course;
 import com.liferay.lms.model.LearningActivity;
 import com.liferay.lms.model.LmsPrefs;
+import com.liferay.lms.model.Module;
 import com.liferay.lms.service.ClpSerializer;
 import com.liferay.lms.service.CourseLocalServiceUtil;
+import com.liferay.lms.service.ModuleLocalServiceUtil;
 import com.liferay.lms.service.base.CourseLocalServiceBaseImpl;
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -133,9 +136,9 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	}
 	
 	public Course addCourse (String title, String description,String summary,String friendlyURL, Locale locale,
-			java.util.Date createDate,java.util.Date startDate,java.util.Date endDate,long layoutSetPrototypeId,int typesite,ServiceContext serviceContext, long calificationType, int maxUsers)
+			java.util.Date createDate,java.util.Date startDate,java.util.Date endDate,long layoutSetPrototypeId,int typesite,ServiceContext serviceContext, long calificationType, int maxUsers,boolean isFromClone)
 			throws SystemException, PortalException {
-		return addCourse(title, description, summary, friendlyURL, locale, createDate, startDate, endDate, layoutSetPrototypeId, typesite, 0, calificationType, maxUsers, serviceContext);
+		return addCourse(title, description, summary, friendlyURL, locale, createDate, startDate, endDate, layoutSetPrototypeId, typesite, 0, calificationType, maxUsers, serviceContext,isFromClone);
 	}
 	
 	public java.util.List<Course> getUserCourses(long userId) throws PortalException, SystemException
@@ -189,7 +192,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	}
 
 	public Course addCourse (String title, String description,String summary,String friendlyURL, Locale locale,
-			java.util.Date createDate,java.util.Date startDate,java.util.Date endDate,long layoutSetPrototypeId,int typesite, long CourseEvalId, long calificationType, int maxUsers,ServiceContext serviceContext)
+			java.util.Date createDate,java.util.Date startDate,java.util.Date endDate,long layoutSetPrototypeId,int typesite, long CourseEvalId, long calificationType, int maxUsers,ServiceContext serviceContext,boolean isfromClone)
 			throws SystemException, PortalException {
 		LmsPrefs lmsPrefs=lmsPrefsLocalService.getLmsPrefsIni(serviceContext.getCompanyId());
 		long userId=serviceContext.getUserId();
@@ -278,7 +281,10 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 						course.getGroupCreatedId(), lmsPrefs.getEditorRole());
 			}			
 			LayoutSetPrototype lsProto=layoutSetPrototypeLocalService.getLayoutSetPrototype(layoutSetPrototypeId);
-			importLayouts(getAdministratorUser(serviceContext.getCompanyId()).getUserId(), group, lsProto);
+			//importLayouts(getAdministratorUser(serviceContext.getCompanyId()).getUserId(), group, lsProto);
+			
+			importLayouts(userId, group, lsProto);
+			
 			
 			CourseEval courseEval = new CourseEvalRegistry().getCourseEval(CourseEvalId);
 			if(courseEval!=null) {
@@ -320,6 +326,51 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			
 		}
 		
+		
+		// METODO METIDO POR MIGUEL
+		
+		System.out.println("Paso por aqui");
+		System.out.println(isfromClone);
+		if(!isfromClone){
+			Module newModule;
+			try {
+				
+				
+				newModule = ModuleLocalServiceUtil.createModule(CounterLocalServiceUtil.increment(Module.class.getName()));
+				
+				newModule.setTitle("Module");
+				newModule.setDescription("Desc");
+				
+				newModule.setCompanyId(course.getCompanyId());
+				newModule.setGroupId(course.getGroupCreatedId());
+				newModule.setUserId(course.getUserId());
+				newModule.setOrdern(newModule.getModuleId());
+				
+				/*
+				Calendar start = Calendar.getInstance();
+				start.setTimeInMillis(module.getStartDate().getTime() + TimeUnit.MILLISECONDS.convert(days, TimeUnit.DAYS));
+				Calendar stop = Calendar.getInstance();
+				stop.setTimeInMillis(module.getEndDate().getTime() + TimeUnit.MILLISECONDS.convert(days, TimeUnit.DAYS));
+				*/
+				
+				//System.out.println(" startDate: "+ start.getTime() +"   -> "+module.getStartDate());
+				//System.out.println(" stopDate : "+ stop.getTime()  +"   -> "+module.getEndDate());
+				
+				newModule.setStartDate(startDate);
+				newModule.setEndDate(endDate);
+				
+				
+				ModuleLocalServiceUtil.addModule(newModule);
+				
+				System.out.println("    + Module : " + newModule.getTitle(Locale.getDefault()) +"("+newModule.getModuleId()+")" );
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		////////////////////////////
 		//auditing
 		AuditingLogFactory.audit(course.getCompanyId(), course.getGroupId(), Course.class.getName(), course.getCourseId(), userId, AuditConstants.ADD, null);
 		return course;
@@ -336,7 +387,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		long layoutSetPrototypeId=Long.valueOf(lmsPrefs.getLmsTemplates());
 		Course course = addCourse (title, description,summary,friendlyURL, locale,
 				createDate,startDate,endDate,layoutSetPrototypeId,GroupConstants.TYPE_SITE_PRIVATE,
-				 serviceContext, calificationType,0);
+				 serviceContext, calificationType,0,false);
 
 		//auditing
 		AuditingLogFactory.audit(course.getCompanyId(), course.getGroupId(), Course.class.getName(), course.getCourseId(), serviceContext.getUserId(), AuditConstants.ADD, null);
@@ -393,14 +444,17 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	{
 			LayoutSet ls = lsProto.getLayoutSet();	
 			
+			Map<String, String[]> parameterMap =getLayoutSetPrototypeParameters();
+
+			
 		File fileIni= layoutLocalService.exportLayoutsAsFile(ls.getGroupId(), true,
-				null,getLayoutSetPrototypeParameters(), null, null);
+				null,parameterMap, null, null);
 	
 		try
 		{
 		layoutLocalService.importLayouts(userId, grupo.getPublicLayoutSet().getGroupId(), 
 			grupo.getPublicLayoutSet().isPrivateLayout(),
-			getLayoutSetPrototypeParameters(), fileIni);
+			parameterMap, fileIni);
 		}
 		catch(Exception e)
 		{
@@ -418,8 +472,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			//new String[] {Boolean.FALSE.toString()});
 		parameterMap.put(
 				PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE,
-				new String[] {PortletDataHandlerKeys.
-						LAYOUTS_IMPORT_MODE_CREATED_FROM_PROTOTYPE});
+				new String[] {PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE_CREATED_FROM_PROTOTYPE});
 		parameterMap.put(
 			PortletDataHandlerKeys.DATA_STRATEGY,
 			new String[] {PortletDataHandlerKeys.DATA_STRATEGY_MIRROR});

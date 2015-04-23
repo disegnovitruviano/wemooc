@@ -384,7 +384,7 @@ public class CourseAdmin extends MVCPortlet {
 				course = com.liferay.lms.service.CourseLocalServiceUtil.addCourse(
 						title, description, summary, friendlyURL,
 						themeDisplay.getLocale(), ahora, startDate, stopDate,courseTemplateId,type,courseEvalId,
-						courseCalificationType,maxusers,serviceContext);
+						courseCalificationType,maxusers,serviceContext,false);
 			}catch(PortalException pe){
 				if(log.isDebugEnabled())log.debug("Error:"+pe.getMessage());
 				if(pe instanceof DuplicateGroupException){
