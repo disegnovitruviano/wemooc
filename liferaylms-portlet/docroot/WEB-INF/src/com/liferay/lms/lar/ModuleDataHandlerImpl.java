@@ -150,6 +150,7 @@ protected String doExportData(PortletDataContext context, String portletId, Port
 	Group group = GroupLocalServiceUtil.getGroup(context.getScopeGroupId());
 	System.out.println(" Course: "+ group.getName());
 	
+	
 	context.addPermissions("com.liferay.lms.model.module", context.getScopeGroupId());
 	
 	Document document = SAXReaderUtil.createDocument();
@@ -159,9 +160,18 @@ protected String doExportData(PortletDataContext context, String portletId, Port
 	rootElement.addAttribute("group-id", String.valueOf(context.getScopeGroupId()));
 	
 	List<Module> entries = ModuleLocalServiceUtil.findAllInGroup(context.getScopeGroupId());
-		
+	long entryOld=0L;
 	for (Module entry : entries) {
-		exportEntry(context, rootElement, entry);
+		System.out.println("Moduleeeeeeeeeeeeeeeeeeeeeeeeeeeeee "+entry.getModuleId());
+		System.out.println("Moduleeeeeeeeeeeeeeeeeeeeeeeeeeeeee entryOld "+entryOld);
+		if(entryOld!=entry.getModuleId())
+		{
+			entryOld=entry.getModuleId();
+			exportEntry(context, rootElement, entry);
+		} else{
+			System.out.println("repetidooooo el modulo "+entry.getModuleId());
+
+		}
 	}
 
 	System.out.println("doExportData ENDS, modules:" + entries.size() + "\n-----------------------------\n"  );
@@ -174,6 +184,7 @@ private void exportEntry(PortletDataContext context, Element root, Module entry)
 	String path = getEntryPath(context, entry);
 	
 	System.out.println("\n  Module: " + entry.getModuleId() +" "+ entry.getTitle(Locale.getDefault()) );
+	
 	
 	if (!context.isPathNotProcessed(path)) {
 		return;
@@ -440,15 +451,17 @@ protected PortletPreferences doImportData(PortletDataContext context, String por
 	
 	context.importPermissions("com.liferay.lms.model.module", context.getSourceGroupId(),context.getScopeGroupId());
 	
-	System.out.println("\n-----------------------------\ndoImportData STARTS");
+	System.out.println("\n-----------------------------\ndoImport1Data STARTS12");
 	
 	
 	Document document = SAXReaderUtil.read(data);
 
 	Element rootElement = document.getRootElement();
-	
+	String entryOld="";
 	for (Element entryElement : rootElement.elements("moduleentry")) {
 		String path = entryElement.attributeValue("path");
+		Group group = GroupLocalServiceUtil.getGroup(context.getScopeGroupId());
+		
 
 		if (!context.isPathNotProcessed(path)) {
 			continue;
@@ -456,8 +469,21 @@ protected PortletPreferences doImportData(PortletDataContext context, String por
 		Module entry = (Module)context.getZipEntryAsObject(path);
 
 		System.out.println("\n  Module: " + entry.getTitle(Locale.getDefault()) );
+		System.out.println("\n  getModuleId: " + entry.getModuleId() );
 		
-		importEntry(context,entryElement, entry);
+		
+		if(!entryOld.equalsIgnoreCase(String.valueOf(entry.getModuleId())))
+		{
+		
+			System.out.println("entraaaaa el modulo "+entry.getModuleId());
+			System.out.println("entraaaaa el entryOld "+entryOld);
+			entryOld=String.valueOf(entry.getModuleId());
+			importEntry(context,entryElement, entry);
+		} else{
+			System.out.println("repetidooooo el modulo "+entry.getModuleId());
+
+		}
+		
 	}
 	
 	System.out.println("doImportData ENDS" + "\n-----------------------------\n"  );
@@ -481,6 +507,12 @@ private void importEntry(PortletDataContext context, Element entryElement, Modul
 	//Para convertir < correctamente.
 	entry.setDescription(entry.getDescription().replace("&amp;lt;", "&lt;"));
 	//entry.setDescription(parseFilesFromDescription(entry.getDescription().replace("&amp;lt;", "&lt;"), entryElement.elements("descriptionfile"), userId, context, serviceContext));
+	
+	System.out.println("entry.setGroupId" +entry.getGroupId()  );
+	System.out.println("entry.setGroupId" +entry.getUserId()  );
+	System.out.println("entry.setGroupId" +entry.getModuleId()  );
+	System.out.println("entry.setGroupId" +entry.getTitle()  );
+	
 	
 	Module theModule=ModuleLocalServiceUtil.addmodule(entry);
 	
