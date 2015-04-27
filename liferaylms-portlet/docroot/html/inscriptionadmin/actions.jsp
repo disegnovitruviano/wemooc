@@ -13,6 +13,6 @@ MembershipRequest msr = (MembershipRequest)row.getObject();
 	<portlet:param name="msrId" value="<%= String.valueOf(msr.getMembershipRequestId()) %>" />
 </portlet:actionURL>
 <liferay-ui:icon-menu>
-	<liferay-ui:icon image="add_user" message="action.ADD_USER" url="${enrollURL}" />
+	<liferay-ui:icon image="add_user" message="acept" url="${enrollURL}" />
 	<liferay-ui:icon image="close" message="deny" url="${deniedURL}" />
 </liferay-ui:icon-menu>
