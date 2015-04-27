@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.lar.UserIdStrategy;
 import com.liferay.portal.kernel.log.Log;
@@ -337,9 +338,8 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 				
 				
 				newModule = ModuleLocalServiceUtil.createModule(CounterLocalServiceUtil.increment(Module.class.getName()));
-				
-				newModule.setTitle("Module");
-				newModule.setDescription("Desc");
+				newModule.setTitle(LanguageUtil.get(locale,"com.liferay.lms.model.module"), locale);
+				newModule.setDescription(LanguageUtil.get(locale,"description"), locale);
 				
 				newModule.setCompanyId(course.getCompanyId());
 				newModule.setGroupId(course.getGroupCreatedId());
