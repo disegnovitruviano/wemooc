@@ -50,49 +50,53 @@
 <liferay-portlet:actionURL name="moveModule" var="moveModuleURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString()%>" />
 
 <script type="text/javascript">
-AUI().ready('node','aui-io-request','aui-parse-content','aui-sortable',function(A) {
+var ismobile=navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i);
 
-	new A.Sortable(
-		{
-			container: A.one('#myContainer'),
-		    nodes: 'table#myModule > tbody > tr',
-            after: {   
-            	'drag:end': function(event){ 
-            		
-				    var node = event.target.get('node'),
-			            prev = node.previous(),
-			            next = node.next(),
-                        movedPageId = parseInt(node.get('id').substr(<%=renderResponse.getNamespace().length() %>),0),
-		            	prevPageId = 0,
-		            	nextPageId = 0;
-				    
-			        if(prev){
-			          prevPageId = parseInt(prev.get('id').substr(<%=renderResponse.getNamespace().length() %>),0);
-				    }
+if(!ismobile){
+	AUI().ready('node','aui-io-request','aui-parse-content','aui-sortable',function(A) {
 
-			        if(next){
-			          nextPageId = parseInt(next.get('id').substr(<%=renderResponse.getNamespace().length() %>),0);
-				    }
+		new A.Sortable(
+			{
+				container: A.one('#myContainer'),
+			    nodes: 'table#myModule > tbody > tr',
+	            after: {   
+	            	'drag:end': function(event){ 
+	            		
+					    var node = event.target.get('node'),
+				            prev = node.previous(),
+				            next = node.next(),
+	                        movedPageId = parseInt(node.get('id').substr(<%=renderResponse.getNamespace().length() %>),0),
+			            	prevPageId = 0,
+			            	nextPageId = 0;
+					    
+				        if(prev){
+				          prevPageId = parseInt(prev.get('id').substr(<%=renderResponse.getNamespace().length() %>),0);
+					    }
 
-					A.io.request('<%=moveModuleURL %>', {  
-						data: {
-				            <portlet:namespace />pageId: movedPageId,
-				            <portlet:namespace />prevPageId: prevPageId,
-				            <portlet:namespace />nextPageId: nextPageId
-				        },
-					    dataType : 'html', 
-					  on: {  
-				  		success: function() {  
-							 Liferay.Portlet.refresh(A.one('#p_p_id<portlet:namespace />'),{'p_t_lifecycle':0,'<%=renderResponse.getNamespace()+WebKeys.PORTLET_CONFIGURATOR_VISIBILITY %>':'<%=StringPool.TRUE %>'});
-				        }  
-					   }  
-					});    
-            	}              
-            }
-		}
-	);
-  });
-  
+				        if(next){
+				          nextPageId = parseInt(next.get('id').substr(<%=renderResponse.getNamespace().length() %>),0);
+					    }
+
+						A.io.request('<%=moveModuleURL %>', {  
+							data: {
+					            <portlet:namespace />pageId: movedPageId,
+					            <portlet:namespace />prevPageId: prevPageId,
+					            <portlet:namespace />nextPageId: nextPageId
+					        },
+						    dataType : 'html', 
+						  on: {  
+					  		success: function() {  
+								 Liferay.Portlet.refresh(A.one('#p_p_id<portlet:namespace />'),{'p_t_lifecycle':0,'<%=renderResponse.getNamespace()+WebKeys.PORTLET_CONFIGURATOR_VISIBILITY %>':'<%=StringPool.TRUE %>'});
+					        }  
+						   }  
+						});    
+	            	}              
+	            }
+			}
+		);
+	  });	
+}
+
   </script>
 <%
 	String idModuleTable = "idModuleTable";
