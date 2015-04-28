@@ -182,6 +182,7 @@ boolean showWelcomeMsg = preferences.getValue("showWelcomeMsg", "true").equals("
 
 boolean showPermission = preferences.getValue("showPermission", "true").equals("true");
 
+String welcomeSubject= new String();
 if(course!=null)
 {
 	groupCreated = GroupLocalServiceUtil.getGroup(course.getGroupCreatedId());
@@ -203,6 +204,7 @@ if(course!=null)
 	endHour=Integer.parseInt(formatHour.format(course.getEndDate()));
 	endMin=Integer.parseInt(formatMin.format(course.getEndDate()));
 	type=course.getStatus(); //TODO
+	welcomeSubject = course.getWelcomeSubject();
 	maxUsers=course.getMaxusers();
 	courseTitle = (String)course.getModelAttributes().get("title");
 	%>
@@ -632,7 +634,13 @@ else
 				<aui:input type="checkbox" name="welcome" label="enabled" value='<%=active %>' onChange='<%= renderResponse.getNamespace()+"changeWelcome()" %>'/>
 				
 				<div id="containerWelcomeMsg" style='display:<%=active?"block":"none"%>'>
+				
+					<aui:input name="welcomeSubject" type="text" label="welcome-subject" value="<%=welcomeSubject%>"/>
+				
 					<aui:field-wrapper label="welcome-msg" name="welcome-msg">
+					
+					
+					
 						<script type="text/javascript">
 							function <portlet:namespace />onChangeWelcomeMsg(val) {
 					        	var A = AUI();
@@ -643,6 +651,10 @@ else
 						<script type="text/javascript">
 		    		    	function <portlet:namespace />initEditorWelcomeMsg() { return "<%= UnicodeFormatter.toString(welcomeMsg) %>"; }
 		    			</script>
+		    			
+		    			
+		    			
+		    			
 					</aui:field-wrapper>
 					<div class="definition-of-terms">
 						<h4><liferay-ui:message key="definition-of-terms" /></h4>

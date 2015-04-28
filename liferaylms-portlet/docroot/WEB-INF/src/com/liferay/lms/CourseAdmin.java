@@ -248,6 +248,7 @@ public class CourseAdmin extends MVCPortlet {
 		String summary = ParamUtil.getString(uploadRequest, "summary", StringPool.BLANK);
 		boolean visible = ParamUtil.getBoolean(uploadRequest, "visible", false);
 		boolean welcome = ParamUtil.getBoolean(uploadRequest, "welcome", false);
+		String welcomeSubject = ParamUtil.getString(uploadRequest, "welcomeSubject",StringPool.BLANK);
 		String welcomeMsg = ParamUtil.getString(uploadRequest, "welcomeMsg",StringPool.BLANK);
 		
 		int type = ParamUtil.getInteger(uploadRequest, "type", GroupConstants.TYPE_SITE_OPEN);
@@ -529,6 +530,7 @@ public class CourseAdmin extends MVCPortlet {
 			}
 			course.setCourseEvalId(courseEvalId);
 			course.setWelcome(welcome);
+			course.setWelcomeSubject(welcomeSubject);
 			course.setWelcomeMsg(welcomeMsg);
 		
 			try {
