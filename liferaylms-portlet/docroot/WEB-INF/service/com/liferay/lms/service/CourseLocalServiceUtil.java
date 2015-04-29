@@ -321,13 +321,13 @@ public class CourseLocalServiceUtil {
 		java.util.Date startDate, java.util.Date endDate,
 		long layoutSetPrototypeId, int typesite,
 		com.liferay.portal.service.ServiceContext serviceContext,
-		long calificationType, int maxUsers)
+		long calificationType, int maxUsers, boolean isFromClone)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .addCourse(title, description, summary, friendlyURL, locale,
 			createDate, startDate, endDate, layoutSetPrototypeId, typesite,
-			serviceContext, calificationType, maxUsers);
+			serviceContext, calificationType, maxUsers, isFromClone);
 	}
 
 	public static java.util.List<com.liferay.lms.model.Course> getUserCourses(
@@ -337,6 +337,11 @@ public class CourseLocalServiceUtil {
 		return getService().getUserCourses(userId);
 	}
 
+	public static java.util.List<com.liferay.lms.model.Course> getPublicCoursesByCompanyId(
+		java.lang.Long companyId) {
+		return getService().getPublicCoursesByCompanyId(companyId);
+	}
+
 	public static com.liferay.lms.model.Course addCourse(
 		java.lang.String title, java.lang.String description,
 		java.lang.String summary, java.lang.String friendlyURL,
@@ -344,13 +349,15 @@ public class CourseLocalServiceUtil {
 		java.util.Date startDate, java.util.Date endDate,
 		long layoutSetPrototypeId, int typesite, long CourseEvalId,
 		long calificationType, int maxUsers,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.service.ServiceContext serviceContext,
+		boolean isfromClone)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .addCourse(title, description, summary, friendlyURL, locale,
 			createDate, startDate, endDate, layoutSetPrototypeId, typesite,
-			CourseEvalId, calificationType, maxUsers, serviceContext);
+			CourseEvalId, calificationType, maxUsers, serviceContext,
+			isfromClone);
 	}
 
 	public static com.liferay.lms.model.Course addCourse(

@@ -653,6 +653,21 @@ public interface CourseModel extends BaseModel<Course>, GroupedModel,
 	public void setWelcomeMsg(String welcomeMsg);
 
 	/**
+	 * Returns the welcome subject of this course.
+	 *
+	 * @return the welcome subject of this course
+	 */
+	@AutoEscape
+	public String getWelcomeSubject();
+
+	/**
+	 * Sets the welcome subject of this course.
+	 *
+	 * @param welcomeSubject the welcome subject of this course
+	 */
+	public void setWelcomeSubject(String welcomeSubject);
+
+	/**
 	 * @deprecated Renamed to {@link #isApproved()}
 	 */
 	public boolean getApproved();

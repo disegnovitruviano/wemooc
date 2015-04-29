@@ -100,6 +100,7 @@ public class CourseClp extends BaseModelImpl<Course> implements Course {
 		attributes.put("calificationType", getCalificationType());
 		attributes.put("welcome", getWelcome());
 		attributes.put("welcomeMsg", getWelcomeMsg());
+		attributes.put("welcomeSubject", getWelcomeSubject());
 
 		return attributes;
 	}
@@ -260,6 +261,12 @@ public class CourseClp extends BaseModelImpl<Course> implements Course {
 
 		if (welcomeMsg != null) {
 			setWelcomeMsg(welcomeMsg);
+		}
+
+		String welcomeSubject = (String)attributes.get("welcomeSubject");
+
+		if (welcomeSubject != null) {
+			setWelcomeSubject(welcomeSubject);
 		}
 	}
 
@@ -683,6 +690,14 @@ public class CourseClp extends BaseModelImpl<Course> implements Course {
 		_welcomeMsg = welcomeMsg;
 	}
 
+	public String getWelcomeSubject() {
+		return _welcomeSubject;
+	}
+
+	public void setWelcomeSubject(String welcomeSubject) {
+		_welcomeSubject = welcomeSubject;
+	}
+
 	/**
 	 * @deprecated {@link #isApproved}
 	 */
@@ -824,6 +839,7 @@ public class CourseClp extends BaseModelImpl<Course> implements Course {
 		clone.setCalificationType(getCalificationType());
 		clone.setWelcome(getWelcome());
 		clone.setWelcomeMsg(getWelcomeMsg());
+		clone.setWelcomeSubject(getWelcomeSubject());
 
 		return clone;
 	}
@@ -880,7 +896,7 @@ public class CourseClp extends BaseModelImpl<Course> implements Course {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(53);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -934,13 +950,15 @@ public class CourseClp extends BaseModelImpl<Course> implements Course {
 		sb.append(getWelcome());
 		sb.append(", welcomeMsg=");
 		sb.append(getWelcomeMsg());
+		sb.append(", welcomeSubject=");
+		sb.append(getWelcomeSubject());
 		sb.append("}");
 
 		return sb.toString();
 	}
 
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(82);
+		StringBundler sb = new StringBundler(85);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.lms.model.Course");
@@ -1050,6 +1068,10 @@ public class CourseClp extends BaseModelImpl<Course> implements Course {
 			"<column><column-name>welcomeMsg</column-name><column-value><![CDATA[");
 		sb.append(getWelcomeMsg());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>welcomeSubject</column-name><column-value><![CDATA[");
+		sb.append(getWelcomeSubject());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -1086,5 +1108,6 @@ public class CourseClp extends BaseModelImpl<Course> implements Course {
 	private long _calificationType;
 	private boolean _welcome;
 	private String _welcomeMsg;
+	private String _welcomeSubject;
 	private BaseModel<?> _courseRemoteModel;
 }

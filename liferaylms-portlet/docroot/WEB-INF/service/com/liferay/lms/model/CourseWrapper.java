@@ -71,6 +71,7 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		attributes.put("calificationType", getCalificationType());
 		attributes.put("welcome", getWelcome());
 		attributes.put("welcomeMsg", getWelcomeMsg());
+		attributes.put("welcomeSubject", getWelcomeSubject());
 
 		return attributes;
 	}
@@ -230,6 +231,12 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 
 		if (welcomeMsg != null) {
 			setWelcomeMsg(welcomeMsg);
+		}
+
+		String welcomeSubject = (String)attributes.get("welcomeSubject");
+
+		if (welcomeSubject != null) {
+			setWelcomeSubject(welcomeSubject);
 		}
 	}
 
@@ -993,6 +1000,24 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	*/
 	public void setWelcomeMsg(java.lang.String welcomeMsg) {
 		_course.setWelcomeMsg(welcomeMsg);
+	}
+
+	/**
+	* Returns the welcome subject of this course.
+	*
+	* @return the welcome subject of this course
+	*/
+	public java.lang.String getWelcomeSubject() {
+		return _course.getWelcomeSubject();
+	}
+
+	/**
+	* Sets the welcome subject of this course.
+	*
+	* @param welcomeSubject the welcome subject of this course
+	*/
+	public void setWelcomeSubject(java.lang.String welcomeSubject) {
+		_course.setWelcomeSubject(welcomeSubject);
 	}
 
 	/**
