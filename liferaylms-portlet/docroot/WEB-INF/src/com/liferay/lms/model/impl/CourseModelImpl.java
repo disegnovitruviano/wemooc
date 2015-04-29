@@ -97,9 +97,10 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			{ "maxusers", Types.BIGINT },
 			{ "calificationType", Types.BIGINT },
 			{ "welcome", Types.BOOLEAN },
-			{ "welcomeMsg", Types.VARCHAR }
+			{ "welcomeMsg", Types.VARCHAR },
+			{ "welcomeSubject", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table Lms_Course (uuid_ VARCHAR(75) null,courseId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,groupCreatedId LONG,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,title STRING null,description STRING null,friendlyURL VARCHAR(100) null,startDate DATE null,endDate DATE null,icon LONG,CourseEvalId LONG,CourseExtraData TEXT null,closed BOOLEAN,maxusers LONG,calificationType LONG,welcome BOOLEAN,welcomeMsg TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table Lms_Course (uuid_ VARCHAR(75) null,courseId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,groupCreatedId LONG,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,title STRING null,description STRING null,friendlyURL VARCHAR(100) null,startDate DATE null,endDate DATE null,icon LONG,CourseEvalId LONG,CourseExtraData TEXT null,closed BOOLEAN,maxusers LONG,calificationType LONG,welcome BOOLEAN,welcomeMsg TEXT null,welcomeSubject VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table Lms_Course";
 	public static final String ORDER_BY_JPQL = " ORDER BY course.courseId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Lms_Course.courseId ASC";
@@ -162,6 +163,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		model.setCalificationType(soapModel.getCalificationType());
 		model.setWelcome(soapModel.getWelcome());
 		model.setWelcomeMsg(soapModel.getWelcomeMsg());
+		model.setWelcomeSubject(soapModel.getWelcomeSubject());
 
 		return model;
 	}
@@ -246,6 +248,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		attributes.put("calificationType", getCalificationType());
 		attributes.put("welcome", getWelcome());
 		attributes.put("welcomeMsg", getWelcomeMsg());
+		attributes.put("welcomeSubject", getWelcomeSubject());
 
 		return attributes;
 	}
@@ -406,6 +409,12 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 		if (welcomeMsg != null) {
 			setWelcomeMsg(welcomeMsg);
+		}
+
+		String welcomeSubject = (String)attributes.get("welcomeSubject");
+
+		if (welcomeSubject != null) {
+			setWelcomeSubject(welcomeSubject);
 		}
 	}
 
@@ -917,6 +926,19 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		_welcomeMsg = welcomeMsg;
 	}
 
+	public String getWelcomeSubject() {
+		if (_welcomeSubject == null) {
+			return StringPool.BLANK;
+		}
+		else {
+			return _welcomeSubject;
+		}
+	}
+
+	public void setWelcomeSubject(String welcomeSubject) {
+		_welcomeSubject = welcomeSubject;
+	}
+
 	/**
 	 * @deprecated {@link #isApproved}
 	 */
@@ -1064,6 +1086,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		courseImpl.setCalificationType(getCalificationType());
 		courseImpl.setWelcome(getWelcome());
 		courseImpl.setWelcomeMsg(getWelcomeMsg());
+		courseImpl.setWelcomeSubject(getWelcomeSubject());
 
 		courseImpl.resetOriginalValues();
 
@@ -1290,12 +1313,20 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			courseCacheModel.welcomeMsg = null;
 		}
 
+		courseCacheModel.welcomeSubject = getWelcomeSubject();
+
+		String welcomeSubject = courseCacheModel.welcomeSubject;
+
+		if ((welcomeSubject != null) && (welcomeSubject.length() == 0)) {
+			courseCacheModel.welcomeSubject = null;
+		}
+
 		return courseCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(53);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1349,13 +1380,15 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(getWelcome());
 		sb.append(", welcomeMsg=");
 		sb.append(getWelcomeMsg());
+		sb.append(", welcomeSubject=");
+		sb.append(getWelcomeSubject());
 		sb.append("}");
 
 		return sb.toString();
 	}
 
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(82);
+		StringBundler sb = new StringBundler(85);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.lms.model.Course");
@@ -1465,6 +1498,10 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			"<column><column-name>welcomeMsg</column-name><column-value><![CDATA[");
 		sb.append(getWelcomeMsg());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>welcomeSubject</column-name><column-value><![CDATA[");
+		sb.append(getWelcomeSubject());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -1517,6 +1554,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	private long _calificationType;
 	private boolean _welcome;
 	private String _welcomeMsg;
+	private String _welcomeSubject;
 	private long _columnBitmask;
 	private Course _escapedModelProxy;
 }

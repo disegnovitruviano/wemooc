@@ -766,6 +766,7 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 		courseImpl.setCalificationType(course.getCalificationType());
 		courseImpl.setWelcome(course.isWelcome());
 		courseImpl.setWelcomeMsg(course.getWelcomeMsg());
+		courseImpl.setWelcomeSubject(course.getWelcomeSubject());
 
 		return courseImpl;
 	}

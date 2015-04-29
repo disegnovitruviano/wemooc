@@ -113,6 +113,7 @@
 			<basic name="calificationType" />
 			<basic name="welcome" />
 			<basic name="welcomeMsg" />
+			<basic name="welcomeSubject" />
 			<transient name="descriptionCurrentLanguageId" />
 			<transient name="descriptionMap" />
 			<transient name="modelAttributes" />
