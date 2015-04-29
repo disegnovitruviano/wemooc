@@ -357,7 +357,7 @@
         <column name="calificationType" type="long"></column>
 		<column name="welcome" type="boolean"/>
 		<column name="welcomeMsg" type="String"/>
-		
+		<column name="welcomeSubject" type="String"/>
  		<order by="asc">
 			<order-column name="courseId" />
 		</order>
