@@ -84,6 +84,25 @@ else
 	if(typeId==3)
 	{
 		if(permissionChecker.hasPermission(themeDisplay.getScopeGroupId(),LearningActivity.class.getName() , actId, "CORRECT")&&isTablet){
+%>
+			<h2 class="description-title"><%=activity.getTitle(themeDisplay.getLocale()) %></h2>
+			<%--<h3  class="description-h3"><liferay-ui:message key="description" /></h3> --%>
+			<div class="description"><%=activity.getDescription(themeDisplay.getLocale()) %></div>
+			
+			<liferay-portlet:renderURL var="correctionPages">
+				<liferay-portlet:param name="actId" value="<%=Long.toString(actId) %>" />
+				<liferay-portlet:param name="jspPage" value="/html/p2ptaskactivity/revisions.jsp" />
+			</liferay-portlet:renderURL>
+			
+			<%
+					String urlCorrections = "self.location = '"+correctionPages.toString()+"';";
+				%>
+				<div class="container-buttons lms-valoraciones">
+					<aui:button style="margin-top:10px" value="p2ptask-see-corrections" onClick="<%=urlCorrections.toString() %>" type="button" />
+				</div>
+				<%
+			
+		
 		}else{
 		%>
 			<h2 class="description-title"><%=activity.getTitle(themeDisplay.getLocale()) %></h2>
