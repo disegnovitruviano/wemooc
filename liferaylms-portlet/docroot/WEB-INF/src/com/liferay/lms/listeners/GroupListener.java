@@ -70,7 +70,14 @@ public class GroupListener extends BaseModelListener<Group> {
 							
 					    	String url = PortalUtil.getPortalURL(company.getVirtualHostname(), 80, false);
 					    	String urlcourse = url+"/web"+course.getFriendlyURL();
-					    	String subject = LanguageUtil.format(user.getLocale(),"welcome-subject", new String[]{course.getTitle(user.getLocale())});
+					    	String subject = new String();
+					    	
+					    	if(course.getWelcomeSubject()!=null&&!StringPool.BLANK.equals(course.getWelcomeSubject())){
+						    	subject = course.getWelcomeSubject();
+					    	}else{
+						    	subject = LanguageUtil.format(user.getLocale(),"welcome-subject", new String[]{course.getTitle(user.getLocale())});
+
+					    	}
 					    	String body = StringUtil.replace(
 				    			course.getWelcomeMsg(),
 				    			new String[] {"[$FROM_ADDRESS$]", "[$FROM_NAME$]", "[$PAGE_URL$]","[$PORTAL_URL$]","[$TO_ADDRESS$]","[$TO_NAME$]"},
