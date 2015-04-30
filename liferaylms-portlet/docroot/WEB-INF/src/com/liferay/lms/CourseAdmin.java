@@ -390,6 +390,9 @@ public class CourseAdmin extends MVCPortlet {
 				if(log.isDebugEnabled())log.debug("Error:"+pe.getMessage());
 				if(pe instanceof DuplicateGroupException){
 					SessionErrors.add(actionRequest, "duplicate-course");
+					actionResponse.setRenderParameter("courseId", String.valueOf(courseId));
+					actionResponse.setRenderParameter("jspPage", "/html/courseadmin/editcourse.jsp");
+					return;
 				}
 				if((Validator.isNotNull(pe.getMessage()))&&(pe.getMessage().startsWith("maxUsers "))){					
 					

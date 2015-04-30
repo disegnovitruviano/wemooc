@@ -53,10 +53,7 @@ label="<%= true %>"
 message="new-course"
 url='<%= newactivityURL %>'
 />
-
-
 </div>
-
 
 <%
 }
@@ -80,7 +77,7 @@ portletURL.setParameter("search","search");
 Locale loc = response.getLocale();
 %>
 <liferay-ui:success key="courseadmin.clone.confirmation.success" message="courseadmin.clone.confirmation.success" />
-<liferay-ui:error ></liferay-ui:error>
+<liferay-ui:error></liferay-ui:error>
 <liferay-ui:search-container iteratorURL="<%=portletURL %>" emptyResultsMessage="there-are-no-courses" delta="10">
 	<liferay-ui:search-container-results>
 	<%

@@ -722,7 +722,7 @@ function <portlet:namespace />changeWelcome(){
 		div.style.display='none';
 	}
 }
-function <portlet:namespace />checkduplicate(val, field)
+ function <portlet:namespace />checkduplicate(val, field)
 {
 	var courseId = document.getElementById('<portlet:namespace />courseId').value;
    	return !Liferay.Service.Lms.Course.existsCourseName(
@@ -733,10 +733,10 @@ function <portlet:namespace />checkduplicate(val, field)
    			serviceParameterTypes: JSON.stringify(['java.lang.Long', 'java.lang.Long', 'java.lang.String'])
    		}
    	);
-}
+} 
 </script>
 
-<aui:script use="liferay-form">
+<%--  <aui:script use="liferay-form">
 	Liferay.Form.register(
 	     {
 	        id: '<portlet:namespace />fm',
@@ -752,4 +752,4 @@ function <portlet:namespace />checkduplicate(val, field)
 	        ]
 	    }
 	);
-</aui:script>
+</aui:script>  --%>
