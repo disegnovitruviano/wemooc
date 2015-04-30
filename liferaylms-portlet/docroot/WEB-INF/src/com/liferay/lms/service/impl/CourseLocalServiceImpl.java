@@ -329,9 +329,6 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		
 		
 		// METODO METIDO POR MIGUEL
-		
-		System.out.println("Paso por aqui");
-		System.out.println(isfromClone);
 		if(!isfromClone){
 			Module newModule;
 			try {
