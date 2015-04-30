@@ -51,8 +51,10 @@ try {
        PlayerConfiguration.BtnPreviousLabel = "<liferay-ui:message key="scorm.previous" />";
        PlayerConfiguration.BtnContinueLabel = "<liferay-ui:message key="scorm.next" />";
        PlayerConfiguration.BtnExitLabel = "<liferay-ui:message key="scorm.exit" />";
+     
        PlayerConfiguration.BtnExitAllLabel = "<liferay-ui:message key="activity.try.exit" />";
-       PlayerConfiguration.BtnAbandonLabel = "<liferay-ui:message key="scorm.abandon" />";
+       
+           PlayerConfiguration.BtnAbandonLabel = "<liferay-ui:message key="scorm.abandon" />";
        PlayerConfiguration.BtnAbandonAllLabel = "<liferay-ui:message key="scorm.abandonall" />";
        PlayerConfiguration.BtnSuspendAllLabel = "<liferay-ui:message key="scorm.suspendall" />";
 
@@ -68,7 +70,14 @@ try {
 
   <div id="placeholder_clicker" style="display: none"></div>
   <div style="width: 99%;">
- 	<div id="placeholder_navigationContainer"></div>
+  	<%
+	if(renderRequest.getWindowState().toString().equals("normal"))
+	{
+	%>
+ 		<div id="placeholder_navigationContainer"></div>
+ 	<%}else{%>
+ 		<div id="placeholder_navigationContainer" class="scorm-button-popup" style="display:none;"></div> 	
+ 	<%}%>
  	<div id="placeholder_treeContainer"></div>
   </div>
 <div id="placeholder_treecontentContainer">
